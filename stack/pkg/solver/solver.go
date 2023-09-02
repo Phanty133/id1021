@@ -56,7 +56,7 @@ func (stack *Expression[StackType]) ParseExpression() (float32, error) {
 	}
 
 	if len(stack.ops) == 0 {
-		return 0, fmt.Errorf("invalid expression")
+		return 0, fmt.Errorf("invalid expression: ops empty")
 	}
 
 	for _, op := range stack.ops {
@@ -64,7 +64,7 @@ func (stack *Expression[StackType]) ParseExpression() (float32, error) {
 		num2, num2err := stack.numStack.Pop()
 
 		if num1err != nil || num2err != nil {
-			return 0, fmt.Errorf("invalid expression")
+			return 0, fmt.Errorf("invalid expression: pop error")
 		}
 
 		result := token.ProcessValues(op, num1, num2)

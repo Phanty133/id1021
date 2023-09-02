@@ -36,7 +36,7 @@ func (stack *DynamicStack[T]) Push(value T) error {
 }
 
 func (stack *DynamicStack[T]) Pop() (T, error) {
-	if stack.ip == 0 {
+	if stack.Empty() {
 		var zero T
 		return zero, fmt.Errorf("stack is empty")
 	}
