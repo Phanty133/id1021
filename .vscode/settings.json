@@ -1,0 +1,7 @@
+{
+	"editor.formatOnSave": true,
+	"[latex]": {
+		"editor.formatOnPaste": false,
+		"editor.suggestSelection": "recentlyUsedByPrefix"
+	}
+}
