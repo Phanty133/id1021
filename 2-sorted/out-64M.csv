@@ -1,0 +1,6 @@
+Size,Min_us,Max_us,Median_us,Mean_us
+BinarySearch
+64000000,1239.058000,2457.864000,1263.782000,1297.987136
+DuplicatesNaive
+SortedDuplicatesBinary
+SortedDuplicatesSmart
