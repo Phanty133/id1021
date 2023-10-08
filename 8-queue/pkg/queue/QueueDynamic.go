@@ -37,8 +37,6 @@ func (q *QueueDynamic[T]) Reallocate(newSize int) {
 	q.front = 0
 	q.back = q.count
 	q.data = newData
-
-	// fmt.Printf("Reallocated queue to size %d\n", newSize)
 }
 
 func (q *QueueDynamic[T]) Enqueue(val T) error {

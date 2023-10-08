@@ -171,9 +171,21 @@ func WriteTimes(name string, times [][]int64, sizes []int) {
 	arrWriter.Flush()
 }
 
+func Equal(a, b []int) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i, v := range a {
+		if v != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
 func main() {
-	objSizes := []int{10, 100, 1000, 5000, 10000, 50000, 100000, 500000, 1000000}
-	repeats := 500
+	objSizes := []int{10, 100, 1000, 5000, 10000, 50000, 100000}
+	repeats := 100
 	arrTimes := make([][]int64, len(objSizes))
 	llTimes := make([][]int64, len(objSizes))
 
@@ -190,7 +202,11 @@ func main() {
 			arrTimes[i][j] = BenchmarkQuickSortArray(arr)
 			llTimes[i][j] = BenchmarkQuickSortLinkedList(ll)
 
-			if j%100 == 0 {
+			if !Equal(arr, LinkedListToArr(ll)) {
+				panic("Not equal ruh roh")
+			}
+
+			if j%10 == 0 {
 				fmt.Printf("Repeat: %d\n", j)
 			}
 		}

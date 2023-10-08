@@ -7,7 +7,7 @@ type LinkedListItem[T comparable] struct {
 
 type LinkedList[T comparable] struct {
 	first *LinkedListItem[T]
-	last  *LinkedListItem[T]
+	// last  *LinkedListItem[T]
 }
 
 func New[T comparable]() *LinkedList[T] {
@@ -23,7 +23,19 @@ func (l *LinkedList[T]) First() *LinkedListItem[T] {
 }
 
 func (l *LinkedList[T]) Last() *LinkedListItem[T] {
-	return l.last
+	if l.first == nil {
+		return nil
+	}
+
+	item := l.first
+
+	for item.next != nil {
+		item = item.next
+	}
+
+	return item
+
+	// return l.last
 }
 
 func (l *LinkedList[T]) Add(value T) {
@@ -32,9 +44,9 @@ func (l *LinkedList[T]) Add(value T) {
 
 	l.first = item
 
-	if l.last == nil {
-		l.last = item
-	}
+	// if l.last == nil {
+	// 	l.last = item
+	// }
 }
 
 func (l *LinkedList[T]) Append(value T) *LinkedListItem[T] {
@@ -44,12 +56,12 @@ func (l *LinkedList[T]) Append(value T) *LinkedListItem[T] {
 
 	if last == nil {
 		l.first = item
-		l.last = item
+		// l.last = item
 		return item
 	}
 
 	last.next = item
-	l.last = item
+	// l.last = item
 	return item
 }
 

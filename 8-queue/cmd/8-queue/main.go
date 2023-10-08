@@ -86,51 +86,51 @@ func Bench(getQueue func() queue.Queue[int], els []int) (int64, int64) {
 }
 
 func main() {
-	sizes := []int{100, 1000, 5000, 10000, 50000, 100000, 500000, 1000000}
-	repeats := 500
-	dynamicInitSize := 4
-	timesDynamic1 := make([][]int64, len(sizes))
-	timesStatic1 := make([][]int64, len(sizes))
+	sizes := []int{100, 1000, 5000, 10000, 50000, 100000}
+	repeats := 100
+	// dynamicInitSize := 4
+	// timesDynamic1 := make([][]int64, len(sizes))
+	// timesStatic1 := make([][]int64, len(sizes))
 	timesLL1 := make([][]int64, len(sizes))
-	timesDynamic2 := make([][]int64, len(sizes))
-	timesStatic2 := make([][]int64, len(sizes))
+	// timesDynamic2 := make([][]int64, len(sizes))
+	// timesStatic2 := make([][]int64, len(sizes))
 	timesLL2 := make([][]int64, len(sizes))
 
 	for i, size := range sizes {
 		fmt.Printf("Running benchmark for size %d\n", size)
 
-		timesDynamic1[i] = make([]int64, repeats)
-		timesStatic1[i] = make([]int64, repeats)
+		// timesDynamic1[i] = make([]int64, repeats)
+		// timesStatic1[i] = make([]int64, repeats)
 		timesLL1[i] = make([]int64, repeats)
-		timesDynamic2[i] = make([]int64, repeats)
-		timesStatic2[i] = make([]int64, repeats)
+		// timesDynamic2[i] = make([]int64, repeats)
+		// timesStatic2[i] = make([]int64, repeats)
 		timesLL2[i] = make([]int64, repeats)
 
 		for j := 0; j < repeats; j++ {
 			els := GenRandIntArr(size, 1, 1000000)
 
-			timesStatic1[i][j], timesStatic2[i][j] = Bench(func() queue.Queue[int] {
-				return queue.NewQueueStatic[int](size)
-			}, els)
+			// timesStatic1[i][j], timesStatic2[i][j] = Bench(func() queue.Queue[int] {
+			// 	return queue.NewQueueStatic[int](size)
+			// }, els)
 
-			timesDynamic1[i][j], timesDynamic2[i][j] = Bench(func() queue.Queue[int] {
-				return queue.NewQueueDynamic[int](dynamicInitSize)
-			}, els)
+			// timesDynamic1[i][j], timesDynamic2[i][j] = Bench(func() queue.Queue[int] {
+			// 	return queue.NewQueueDynamic[int](dynamicInitSize)
+			// }, els)
 
 			timesLL1[i][j], timesLL2[i][j] = Bench(func() queue.Queue[int] {
 				return queue.NewQueueLL[int]()
 			}, els)
 
-			if j%100 == 0 {
+			if j%10 == 0 {
 				fmt.Printf("Completed %d/%d\n", j, repeats)
 			}
 		}
 	}
 
-	WriteTimes("static1.csv", timesStatic1, sizes)
-	WriteTimes("dynamic1.csv", timesDynamic1, sizes)
-	WriteTimes("ll1.csv", timesLL1, sizes)
-	WriteTimes("static2.csv", timesStatic2, sizes)
-	WriteTimes("dynamic2.csv", timesDynamic2, sizes)
-	WriteTimes("ll2.csv", timesLL2, sizes)
+	// WriteTimes("static1.csv", timesStatic1, sizes)
+	// WriteTimes("dynamic1.csv", timesDynamic1, sizes)
+	WriteTimes("ll1-slow.csv", timesLL1, sizes)
+	// WriteTimes("static2.csv", timesStatic2, sizes)
+	// WriteTimes("dynamic2.csv", timesDynamic2, sizes)
+	WriteTimes("ll2-slow.csv", timesLL2, sizes)
 }
