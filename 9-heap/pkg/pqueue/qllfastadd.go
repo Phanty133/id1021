@@ -35,13 +35,16 @@ func (h *PQueueLLFastAdd[T]) Remove() (T, error) {
 	minPrevNode = nil
 	prevNode = nil
 
-	for node := range h.list.Iter() {
+	node := h.list.First()
+
+	for node != nil {
 		if min == nil || min.Head.Priority < node.Head.Priority {
 			min = node
 			minPrevNode = prevNode
 		}
 
 		prevNode = node
+		node = node.Next()
 	}
 
 	if minPrevNode == nil {

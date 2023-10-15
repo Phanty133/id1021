@@ -19,8 +19,8 @@ func (h *ArrHeap[T]) Empty() bool {
 	return len(h.data) == 0
 }
 
-func NewArrHeap[T any]() *ArrHeap[T] {
-	return &ArrHeap[T]{data: make([]ArrHeapNode[T], 0)}
+func NewArrHeap[T any](prealloc int) *ArrHeap[T] {
+	return &ArrHeap[T]{data: make([]ArrHeapNode[T], 0, prealloc)}
 }
 
 func (h *ArrHeap[T]) Add(val T, priority int) {
@@ -30,17 +30,24 @@ func (h *ArrHeap[T]) Add(val T, priority int) {
 }
 
 func (h *ArrHeap[T]) bubble() {
-	i := len(h.data) - 1
+	n := len(h.data) - 1
 
-	for i > 0 {
-		parent := (i - 1) / 2
+	for n > 0 {
+		var parent int
 
-		if h.data[parent].priority <= h.data[i].priority {
+		// Calculate the parent node
+		if n%2 == 0 {
+			parent = (n - 2) / 2
+		} else {
+			parent = (n - 1) / 2
+		}
+
+		if h.data[parent].priority <= h.data[n].priority {
 			break
 		}
 
-		h.data[parent], h.data[i] = h.data[i], h.data[parent]
-		i = parent
+		h.data[parent], h.data[n] = h.data[n], h.data[parent]
+		n = parent
 	}
 }
 
@@ -52,48 +59,50 @@ func (h *ArrHeap[T]) Remove() (T, error) {
 
 	val := h.data[0].Value
 
-	lastEl := len(h.data) - 1
-	h.data[0] = h.data[lastEl]
-	h.data = h.data[:lastEl]
+	lastIdx := len(h.data) - 1
+	h.data[0] = h.data[lastIdx] // Replace root value
+	h.data = h.data[:lastIdx]   // Remove the last node
 	h.sink()
 
 	return val, nil
 }
 
 func (h *ArrHeap[T]) sink() {
-	i := 0
+	n := 0
 	dataLen := len(h.data)
 
-	for i < dataLen {
-		left := 2*i + 1
-		right := 2*i + 2
+	for n < dataLen {
+		left := 2*n + 1
+		right := 2*n + 2
 
 		if left >= dataLen {
+			// No children
 			break
 		}
 
 		if right >= dataLen {
-			if h.data[left].priority < h.data[i].priority {
-				h.data[left], h.data[i] = h.data[i], h.data[left]
+			// Only left child
+
+			if h.data[left].priority < h.data[n].priority {
+				h.data[left], h.data[n] = h.data[n], h.data[left]
 			}
 
 			break
 		}
 
+		var targetIdx int
+
 		if h.data[left].priority < h.data[right].priority {
-			if h.data[left].priority <= h.data[i].priority {
-				break
-			}
-
-			h.data[left], h.data[i] = h.data[i], h.data[left]
-			i = left
+			targetIdx = left
 		} else {
-			if h.data[right].priority >= h.data[i].priority {
-				break
-			}
-
-			h.data[right], h.data[i] = h.data[i], h.data[right]
-			i = right
+			targetIdx = right
 		}
+
+		if h.data[targetIdx].priority > h.data[n].priority {
+			break
+		}
+
+		h.data[targetIdx], h.data[n] = h.data[n], h.data[targetIdx]
+		n = targetIdx
 	}
 }

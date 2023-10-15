@@ -25,12 +25,15 @@ func (h *PQueueLLFastRemove[T]) Add(value T, priority int) {
 	var prevNode *llist.LinkedListItem[PriorityQueueItem[T]]
 	prevNode = nil
 
-	for node := range h.list.Iter() {
+	node := h.list.First()
+
+	for node != nil {
 		if node.Head.Priority < priority {
 			break
 		}
 
 		prevNode = node
+		node = node.Next()
 	}
 
 	newNode := &llist.LinkedListItem[PriorityQueueItem[T]]{Head: newItem}
