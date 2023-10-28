@@ -6,6 +6,7 @@ const MOD_VAL int = 541
 
 type City struct {
 	Name      string
+	idx       int
 	Neighbors []Connection
 }
 
@@ -98,12 +99,12 @@ func (n *NetworkGraph) FillData(from []string, to []string, dist []int) {
 		toCity := n.LookupCity(to[i])
 
 		if fromCity == nil {
-			fromCity = &City{from[i], nil}
+			fromCity = &City{from[i], n.NumCities, nil}
 			n.AddCity(fromCity)
 		}
 
 		if toCity == nil {
-			toCity = &City{to[i], nil}
+			toCity = &City{to[i], n.NumCities, nil}
 			n.AddCity(toCity)
 		}
 
@@ -117,123 +118,6 @@ func (n *NetworkGraph) FillData(from []string, to []string, dist []int) {
 	}
 }
 
-func (n *NetworkGraph) CountBucketCollisions() (int, map[int]int) {
-	collisions := 0
-	bucketSizes := make(map[int]int, 0)
-
-	for i, bucket := range n.Cities {
-		if bucket == nil {
-			continue
-		}
-
-		if len(bucket) > 1 {
-			collisions++
-		}
-
-		bucketSizes[i] = len(bucket)
-	}
-
-	return collisions, bucketSizes
-}
-
-func (n *NetworkGraph) DepthFirstDistance(from string, to string, maxDistance int) (int, error) {
-	fromCity := n.LookupCity(from)
-	toCity := n.LookupCity(to)
-
-	if fromCity == nil || toCity == nil {
-		return 0, errors.New("city not found")
-	}
-
-	return fromCity.shortestDistance(toCity, maxDistance)
-}
-
-func (c *City) shortestDistance(to *City, maxDistance int) (int, error) {
-	if maxDistance < 0 {
-		return 0, errors.New("max distance exceeded")
-	}
-
-	if c == to {
-		return 0, nil
-	}
-
-	minDist := -1
-
-	for _, con := range c.Neighbors {
-		dist, err := con.City.shortestDistance(to, maxDistance-con.Dist)
-
-		if err != nil {
-			continue
-		}
-
-		if minDist == -1 || dist+con.Dist < minDist {
-			minDist = dist + con.Dist
-		}
-	}
-
-	if minDist == -1 {
-		return 0, errors.New("no path found")
-	}
-
-	return minDist, nil
-}
-
-func (n *NetworkGraph) DepthFirstDistanceNoLoop(from string, to string) (int, error) {
-	fromCity := n.LookupCity(from)
-	toCity := n.LookupCity(to)
-
-	if fromCity == nil || toCity == nil {
-		return 0, errors.New("city not found")
-	}
-
-	visited := make([]string, n.NumCities)
-
-	return fromCity.shortestDistanceNoLoop(toCity, visited)
-}
-
-func contains(arr []string, val string) bool {
-	for _, v := range arr {
-		if v == val {
-			return true
-		}
-	}
-
-	return false
-}
-
-func (c *City) shortestDistanceNoLoop(to *City, path []string) (int, error) {
-	newPath := make([]string, len(path)+1)
-	copy(newPath, path)
-	newPath[len(path)] = c.Name
-
-	if c == to {
-		return 0, nil
-	}
-
-	minDist := -1
-
-	for _, con := range c.Neighbors {
-		if contains(path, con.City.Name) {
-			continue
-		}
-
-		dist, err := con.City.shortestDistanceNoLoop(to, newPath)
-
-		if err != nil {
-			continue
-		}
-
-		if minDist == -1 || dist+con.Dist < minDist {
-			minDist = dist + con.Dist
-		}
-	}
-
-	if minDist == -1 {
-		return 0, errors.New("no path found")
-	}
-
-	return minDist, nil
-}
-
 func (n *NetworkGraph) DepthFirstDistanceNoLoopMaxed(from string, to string) (int, []string, error) {
 	fromCity := n.LookupCity(from)
 	toCity := n.LookupCity(to)
@@ -245,6 +129,16 @@ func (n *NetworkGraph) DepthFirstDistanceNoLoopMaxed(from string, to string) (in
 	path := make([]string, 0, n.NumCities)
 
 	return fromCity.shortestDistanceNoLoopMaxed(toCity, path, -1, -1)
+}
+
+func contains(arr []string, val string) bool {
+	for _, v := range arr {
+		if v == val {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (c *City) shortestDistanceNoLoopMaxed(
