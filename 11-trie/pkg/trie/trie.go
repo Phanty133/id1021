@@ -41,7 +41,7 @@ func GetCharCode(char rune) int {
 			char -= 1
 		}
 
-		return int(char) - 97
+		return int(char) - 'a'
 	}
 }
 
@@ -62,7 +62,7 @@ func GetCharFromCode(code int) rune {
 			code += 1
 		}
 
-		return rune(code + 97)
+		return rune(code + 'a')
 	}
 }
 
